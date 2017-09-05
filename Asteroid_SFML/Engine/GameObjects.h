@@ -120,7 +120,7 @@ private:
 class AmmoPack : public GameObject
 {
 public:
-	AmmoPack(std::string texturePath, sf::Vector2f& pos);
+	AmmoPack(std::string texturePath, const sf::Vector2f& pos);
 	virtual void Update(sf::RenderWindow* window, float dt);
 	virtual void ApplyDrag(float dt) {};
 	virtual void CollidedWith(GameObject * other);
@@ -131,4 +131,37 @@ public:
 private:
 	int m_ammoCount;
 	float m_ammoPackLifeTime;
+};
+
+
+class Coin : public GameObject
+{
+public:
+	Coin(std::string texturePath, const sf::Vector2f& pos);
+	virtual void Update(sf::RenderWindow* window, float dt);
+	virtual void ApplyDrag(float dt) {};
+	virtual void Destroy();
+	
+	int m_scoreValue;
+
+private:
+	float m_coinLifeTime;
+
+};
+
+class GoldCoin : public Coin
+{
+public:
+	GoldCoin(const sf::Vector2f& pos);
+	virtual void CollidedWith(GameObject * other);
+	
+};
+
+class SilverCoin : public Coin
+{
+public:
+	SilverCoin(const sf::Vector2f& pos);
+	virtual void CollidedWith(GameObject * other);
+	
+
 };

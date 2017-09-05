@@ -20,6 +20,7 @@ public:
 	void SetScoreOnFile(int scoreValue);
 	void DecreaseAmmo();
 	void AddAmmo(int ammo);
+	void SpawnCoins();
 	int GetAmmoRemaining() { return m_ammoRemaining; }
 	void SetBackgroundSize(sf::Vector2f(size));
 	int ExtractHighScoreFromFile();

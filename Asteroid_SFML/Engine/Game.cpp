@@ -15,12 +15,14 @@ Game::Game()
 	, m_livesRemaining(4)
 	, m_superWidth(0)
 	, m_menuIsOpen(true)
+	, m_ammoRemaining(30)
 	
 	
 {
 	m_mainFont.loadFromFile("Fonts/kenpixel_high_square.ttf");
 	m_Music.openFromFile("Sound/testSong.ogg");
 	m_Music.play();
+	RespawnPlayer();
 }
 
 
@@ -33,7 +35,7 @@ void Game::Draw(sf::RenderWindow * window)
 		//Drawing the Background
 		sf::RectangleShape background(sf::Vector2f(1280, 720));
 		sf::Texture backgroundTexture;
-		backgroundTexture.loadFromFile("Sprites/Backgrounds/star.png");
+		backgroundTexture.loadFromFile("Sprites/Backgrounds/BG4_01.png");
 		background.setTexture(&backgroundTexture);
 		window->draw(background);
 
@@ -53,9 +55,9 @@ void Game::Draw(sf::RenderWindow * window)
 		for (int i = 0; i < m_livesRemaining; i++)
 		{
 			sf::Texture texture;
-			texture.loadFromFile("Sprites/PNG/playerShip2_red.png");
+			texture.loadFromFile("Sprites/PNG/Player01.png");
 			sf::Sprite sprite(texture);
-			sprite.setScale(sf::Vector2f(0.4f, 0.4f));
+			sprite.setScale(sf::Vector2f(0.05f, 0.05f));
 			sprite.setPosition(sf::Vector2f(i * 40, 50));
 			window->draw(sprite);
 
@@ -188,7 +190,7 @@ void Game::Update(sf::RenderWindow * window, float dt)
 		m_timeUntilRespawn -= dt;
 		if (m_timeUntilRespawn <= 0)
 		{
-			Player* player = new Player("Sprites/PNG/playerShip2_red.png", sf::Vector2f(600, 300));
+			Player* player = new Player("Sprites/PNG/Player01.png", sf::Vector2f(600, 300));
 			AddObject(player);
 			PlaySound("Sound/Respawn.wav");
 		}
@@ -198,6 +200,7 @@ void Game::Update(sf::RenderWindow * window, float dt)
 	if (m_SpawnAsteroids == true)
 	{
 		SpawnAsteriods();
+		SpawnCoins();
 		for (int i = m_gameObjects.size() - 1; i >= 0; i--)
 		{
 			GameObject* current = m_gameObjects[i];
@@ -399,4 +402,28 @@ void Game::AddAmmo(int ammo)
 void Game::SetBackgroundSize(sf::Vector2f(size))
 {
 	
+}
+
+void Game::SpawnCoins()
+{
+	int numOfCoins = rand() % 5 + 1;
+	for (int i = 0; i < numOfCoins; i++)
+	{
+		Coin* newCoin;
+		if (rand() % 2 == 0)
+		{
+			newCoin = new GoldCoin(sf::Vector2f(rand() % 1000 + 100, rand() % 600 + 50));
+		}
+		else
+		{
+			newCoin = new SilverCoin(sf::Vector2f(rand() % 1000 + 100, rand() % 600 + 50));
+		}
+
+		newCoin->SetVelocity(10);
+		AddObject(newCoin);
+
+	}
+
+
+
 }

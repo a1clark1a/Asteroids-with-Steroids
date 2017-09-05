@@ -216,7 +216,7 @@ Player::Player(std::string texturePath, const sf::Vector2f & pos)
 	
 {
 	SetCollisionRadius(30);
-	m_sprite.setScale(0.7, 0.7);
+	m_sprite.setScale(0.1, 0.1);
 	
 }
 
@@ -227,13 +227,13 @@ void Player::Draw(sf::RenderWindow* window)
 	if (m_invulnerableTime > 0.0f)
 	{
 		sf::CircleShape shape;
-		shape.setRadius(40);
+		shape.setRadius(45);
 		shape.setFillColor(sf::Color::Transparent);
 		shape.setOutlineThickness(10 * m_invulnerableTime/3.0f + 1);
 		sf::Color color = sf::Color::Blue;
 		color.a = 255 * m_invulnerableTime / 3.0f;
 		shape.setOutlineColor(color);
-		shape.setOrigin(40, 40);
+		shape.setOrigin(45, 45);
 		shape.setPosition(m_pos.x, m_pos.y);
 		window->draw(shape);
 		
@@ -439,24 +439,22 @@ void LargeAsteroid::Destroy()
 **********************AMMOPACK CLASS DEFINITION*******************************
 *****************************************************************************/
 
-AmmoPack::AmmoPack(std::string texturePath, sf::Vector2f& pos)
+AmmoPack::AmmoPack(std::string texturePath, const sf::Vector2f& pos)
 	: GameObject(texturePath, pos)
 {
 	SetCollisionRadius(30);
 	m_ammoCount = rand() % 5 + 10;
 	SetVelocity(10);
-	m_ammoPackLifeTime = 2.0f;
+	m_ammoPackLifeTime = 5.0f;
 }
 
 void AmmoPack::Update(sf::RenderWindow* window, float dt)
 {
 	GameObject::Update(window, dt);
 	m_ammoPackLifeTime -= dt;
-	std::cout << "ammo : " << m_ammoPackLifeTime << std::endl;
 	if (m_ammoPackLifeTime  <= 0)
 	{
 		Destroy();
-		m_ammoPackLifeTime = 2.0f;
 	}
 	
 }
@@ -472,10 +470,70 @@ void AmmoPack::CollidedWith(GameObject * other)
 	Player * player = dynamic_cast<Player*>(other);
 	if (player)
 	{
-		Destroy();
+		
 		m_owner->AddAmmo(m_ammoCount);
 		m_owner->PlaySound("Sound/PowerUp.wav");
+		Destroy();
 	}
 
 }
 
+/*****************************************************************************
+**********************COIN CLASS DEFINITION*******************************
+*****************************************************************************/
+
+Coin::Coin(std::string texturePath,const sf::Vector2f& pos)
+	:GameObject(texturePath, pos)
+{
+	SetCollisionRadius(30);
+	m_coinLifeTime = 5.0f;
+	SetVelocity(10);
+	m_sprite.setScale(0.5, 0.5);
+
+}
+
+void Coin::Update(sf::RenderWindow* window, float dt)
+{
+	GameObject::Update(window, dt);
+	m_coinLifeTime -= dt;
+
+}
+
+
+void Coin::Destroy()
+{
+	GameObject::Destroy();
+}
+
+GoldCoin::GoldCoin(const sf::Vector2f& pos)
+	: Coin("Sprites/PNG/Power-ups/GoldMoney.png", pos)
+{
+	m_scoreValue = 500;
+}
+
+void GoldCoin::CollidedWith(GameObject* other)
+{
+	Player* player = dynamic_cast<Player*>(other);
+	if (player)
+	{
+		m_owner->SetScore(m_scoreValue);
+		Destroy();
+	}
+}
+
+
+SilverCoin::SilverCoin(const sf::Vector2f& pos)
+	: Coin("Sprites/PNG/Power-ups/SilverMoney.png", pos)
+{
+	m_scoreValue = 250;
+}
+
+void SilverCoin::CollidedWith(GameObject* other)
+{
+	Player* player = dynamic_cast<Player*>(other);
+	if (player)
+	{
+		m_owner->SetScore(m_scoreValue);
+		Destroy();
+	}
+}
